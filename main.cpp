@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
     
     std::cout << "accuracy: " << res.accuracy << std::endl
               << "false positives rate: " << res.false_pos_rate << std::endl
-              << "false negatives rate: " << res.false_pos_rate << std::endl
+              << "false negatives rate: " << res.false_neg_rate << std::endl
               << "precision: " << res.precision << std::endl
               << "recall: " << res.recall << std::endl
               << "f measure: " << res.f_measure << std::endl;
