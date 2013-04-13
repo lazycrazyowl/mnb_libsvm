@@ -3,6 +3,7 @@
 
 #include "basic_types.hpp"
 #include <cmath>
+#include <stdexcept>
 
 template<typename TClassifier, typename TIter>
 void train(TClassifier &cls, TIter begin, TIter end)
@@ -58,6 +59,12 @@ struct cls_stat_t
         right_black += other.right_black;
         wrong_white += other.wrong_white;
         wrong_black += other.wrong_black;
+        accuracy += other.accuracy;
+        false_pos_rate += other.false_pos_rate;
+        false_neg_rate += other.false_neg_rate;
+        precision += other.precision;
+        recall += other.recall;
+        f_measure += other.f_measure;
         return *this;
     }
     
@@ -99,20 +106,33 @@ cls_stat_t classify(TClassifier &cls, TRAIter begin, TRAIter end)
 template<typename TClassifier, typename TRAIter>
 cls_stat_t n_fold_cv(TRAIter neg_begin, TRAIter neg_end, TRAIter pos_begin, TRAIter pos_end, uint folds = 10)
 {
+    LOG("nfold " << folds);
     uint neg_docs = std::distance(neg_begin, neg_end);
     int neg_step = std::ceil(neg_docs / (float)folds);
     
     uint pos_docs = std::distance(pos_begin, pos_end);
     int pos_step = std::ceil(pos_docs / (float)folds);
-    
+ 
+    if (folds > neg_docs || folds > pos_docs)
+    {
+        LOG("Number of folds is greater than number of docs!");
+        throw std::logic_error("Number of folds is greater than number of docs!");
+    }
+        
+    LOG("nfold steps " << neg_docs << " " << neg_step << " " << pos_docs << " " << pos_step);
     cls_stat_t result;
     for (int i = 0; i < folds; i++)
     {
+        LOG("nfold i " << i);
         TRAIter neg_left = neg_begin + i * neg_step;
         TRAIter neg_right = ((i + 1) * neg_step < neg_docs) ? (neg_begin + (i + 1) * neg_step) : neg_end;
         
+        LOG("nfold neg " << (neg_left - neg_begin) << " " << (neg_right - neg_begin));
+        
         TRAIter pos_left = pos_begin + i * pos_step;
         TRAIter pos_right = ((i + 1) * pos_step < pos_docs) ? (pos_begin + (i + 1) * pos_step) : pos_end;
+        
+        LOG("nfold pos " << (pos_left - pos_begin) << " " << (pos_right - pos_begin));
         
         TClassifier cls;
         TRAIter buf = neg_begin;
@@ -125,11 +145,12 @@ cls_stat_t n_fold_cv(TRAIter neg_begin, TRAIter neg_end, TRAIter pos_begin, TRAI
         buf = pos_right;
         while (buf != pos_end) cls.add_doc(*buf++);
         
-        result += classify(cls, neg_left, neg_right);
-        result += classify(cls, pos_left, pos_right);
+        cls_stat_t fold_stat = classify(cls, neg_left, neg_right);
+        fold_stat += classify(cls, pos_left, pos_right);
+        fold_stat.calc();
+        result += fold_stat;
     }
 
-    result.calc();
     result /= folds;
 
     return result;

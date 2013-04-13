@@ -36,12 +36,19 @@ doc_list_t load_data_file(std::string &fname)
     doc_list_t result;
     std::ifstream f(fname);
 
+    doc_id_t did = 0;
     while (f.good())
     {
         std::string buf;
         std::getline(f, buf);
-        if (buf.length() > 0)
-            result.push_back(load_doc(buf));
+        if (buf.size() > 0)
+        {
+            doc_info_t doc = load_doc(buf);
+            doc.id = did;
+            did++;
+            //LOG(result.size() << " " << doc.cat);
+            result.push_back(doc);
+        }
     }
 
     return result;

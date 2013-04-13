@@ -25,7 +25,7 @@ private:
         cat_info_t()
             : amount_of_docs(0)
         {
-            features.set_deleted_key(UNDEFINED_FEATURE_ID);
+            //features.set_deleted_key(UNDEFINED_FEATURE_ID);
         }
 
         feat_prob_map_t                                 features;

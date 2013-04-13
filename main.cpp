@@ -70,12 +70,23 @@ int main(int argc, char *argv[])
         return -1;
     }
     
+    LOG("Loading data...");
     doc_list_t docs = load_data_file(data_file);
-    std::sort(docs.begin(), docs.end(), doc_info_cat_asc);
+    LOG("Loaded docs: " << docs.size());
+
+    std::sort(docs.begin(), docs.end(), doc_info_cat_id_asc);
+    LOG("Sorted!");
     doc_list_t::iterator first_positive = std::lower_bound(docs.begin(), docs.end(), docs.front(), doc_info_cat_asc);
+    LOG("First positive: " << (first_positive - docs.begin()));
+    
     std::random_shuffle(docs.begin(), first_positive);
+    
+    LOG("Negative shuffled!");
+    
     std::random_shuffle(first_positive, docs.end());
 
+    LOG("Positive shuffled!");
+    
     cls_stat_t res = n_fold_cv<MultinomialNaiveBayes>(
           docs.begin()
         , first_positive
