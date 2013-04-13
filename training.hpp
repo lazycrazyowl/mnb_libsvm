@@ -40,7 +40,6 @@ struct cls_stat_t
         float total_black = right_black + wrong_black;
         float total = total_white + total_black;
 
-        cls_stat_t result;
         accuracy = (right_white + right_black) / total;
         false_pos_rate = wrong_white / total_white;
         false_neg_rate = wrong_black / total_black;
@@ -49,8 +48,8 @@ struct cls_stat_t
         precision = rb_ww > 0 ? (right_black / rb_ww) : 0;
         recall = right_black / total_black;
 
-        float p_r = result.precision + result.recall;
-        f_measure = p_r > 0 ? 2 * (result.precision * result.recall) / p_r : 0;
+        float p_r = precision + recall;
+        f_measure = p_r > 0 ? 2 * (precision * recall) / p_r : 0;
     }
     
     cls_stat_t operator +=(const cls_stat_t &other)
