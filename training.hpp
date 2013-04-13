@@ -1,0 +1,7 @@
+#ifndef MNB_LIBSVM_TRAINING_HPP
+#define MNB_LIBSVM_TRAINING_HPP
+
+
+void
+
+#endif // MNB_LIBSVM_TRAINING_HPP
