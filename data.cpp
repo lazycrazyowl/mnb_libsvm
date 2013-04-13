@@ -26,6 +26,7 @@ doc_info_t load_doc(std::string &src)
         feat.first = boost::lexical_cast<feature_id_t>(parsed[0]);
         feat.second = boost::lexical_cast<feature_value_t>(parsed[1]);
         result.doc.push_back(feat);
+        iter++;
     }
     return result;
 }
@@ -34,12 +35,13 @@ doc_list_t load_data_file(std::string &fname)
 {
     doc_list_t result;
     std::ifstream f(fname);
-    
+
     while (f.good())
     {
         std::string buf;
         std::getline(f, buf);
-        result.push_back(std::move(load_doc(buf)));
+        if (buf.length() > 0)
+            result.push_back(load_doc(buf));
     }
 
     return result;

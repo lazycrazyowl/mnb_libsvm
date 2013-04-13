@@ -3,6 +3,8 @@
 
 #include <cstdint>
 #include <vector>
+#include <deque>
+
 
 typedef uint32_t                                        feature_id_t;
 typedef double                                          feature_value_t;
@@ -13,7 +15,7 @@ const cat_id_t UNDEFINED_CAT_ID = 0;
 
 typedef std::pair<feature_id_t, feature_value_t>        feature_t;
 
-typedef std::vector<feature_t>                          doc_t;
+typedef std::deque<feature_t>                          doc_t;
 
 struct doc_info_t
 {
@@ -25,6 +27,8 @@ struct doc_info_t
     doc_t       doc;
 };
 
-typedef std::vector<doc_info_t>                         doc_list_t;
+bool doc_info_cat_asc(const doc_info_t & a , const doc_info_t & b);
+
+typedef std::deque<doc_info_t>                         doc_list_t;
 
 #endif // MNB_LIBSVM_BASIC_TYPES_HPP

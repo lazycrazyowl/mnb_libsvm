@@ -11,7 +11,7 @@ class MultinomialNaiveBayes
 public:
     MultinomialNaiveBayes();
 
-    void add_doc(cat_id_t cat, const doc_t &doc);
+    void add_doc(const doc_info_t &doc);
     void finalize();
     cat_id_t classify(const doc_t &doc) const;
 

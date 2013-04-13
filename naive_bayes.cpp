@@ -6,12 +6,12 @@ MultinomialNaiveBayes::MultinomialNaiveBayes()
     m_cats.set_deleted_key(UNDEFINED_CAT_ID);
 }
 
-void MultinomialNaiveBayes::add_doc(cat_id_t cid, const doc_t &doc)
+void MultinomialNaiveBayes::add_doc(const doc_info_t &doc)
 {
-    cat_info_t &cat = m_cats[cid];
-    for (const feature_t &f : doc)
+    cat_info_t &cat = m_cats[doc.cat];
+    for (const feature_t &f : doc.doc)
     {
-        feat_prob_map_t::iterator &iter = cat.features.find(f.first);
+        const feat_prob_map_t::iterator &iter = cat.features.find(f.first);
         if (iter == cat.features.end())
             cat.features[f.first] = 1 + f.second;
         else
@@ -24,12 +24,12 @@ void MultinomialNaiveBayes::add_doc(cat_id_t cid, const doc_t &doc)
 void MultinomialNaiveBayes::finalize()
 {
     size_t vocab_size = m_vocab.size();
-    for (const cats_map_t::value_type &cat_pair : m_cats)
+    for (cats_map_t::value_type &cat_pair : m_cats)
     {
         feature_value_t sum = vocab_size;
         for (const feature_t &feat : cat_pair.second.features)
             sum += feat.second;
-        for (feature_t &feat : cat_pair.second.features)
+        for (feat_prob_map_t::value_type &feat : cat_pair.second.features)
             feat.second /= sum;
     }
 }
@@ -43,7 +43,7 @@ cat_id_t MultinomialNaiveBayes::classify(const doc_t &doc) const
         feature_value_t cat_prob = 0;
         for (const feature_t &feat : doc)
         {
-            feat_prob_map_t::iterator iter = cat_pair.second.features.find(feat.first);
+            const feat_prob_map_t::const_iterator &iter = cat_pair.second.features.find(feat.first);
             if (iter != cat_pair.second.features.end())
                 cat_prob += std::log(iter->second);
         }
